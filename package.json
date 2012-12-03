@@ -1,0 +1,9 @@
+{
+  "name": "history-vis",
+  "version": "0.0.1",
+
+  "dependencies": {
+    "express": "3.0.3",
+    "browserify": "1.16.6"
+  }
+}
