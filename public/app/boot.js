@@ -1,7 +1,17 @@
-// Demo code, delete before proceeding
-var foo = require('./helpers/foo'),
-    bar = require('./helpers/bar');
+require.config({
+    paths: {
+        jquery: 'lib/jquery'
+    }
+});
 
-console.log(foo, bar);
+require(
+    [
+        'controllers/loop'
+    ],
 
-document.getElementById('output').innerHTML = foo.init() + bar;
+    function (
+        loop
+    ) {
+        loop.init();
+    }
+)
