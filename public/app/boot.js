@@ -6,10 +6,12 @@ require.config({
 
 require(
     [
+        'lib/animation',
         'controllers/loop'
     ],
 
     function (
+        animation,
         loop
     ) {
         loop.init();

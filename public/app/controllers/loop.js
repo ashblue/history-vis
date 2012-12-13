@@ -6,7 +6,9 @@ define(
         'controllers/scene',
         'models/sphere',
         'controllers/lighting',
-        'controllers/storage'
+        'controllers/storage',
+        'models/delta',
+        'models/timer'
     ],
     function (
         $,
@@ -15,9 +17,20 @@ define(
         scene,
         Sphere,
         lighting,
-        storage
+        storage,
+        delta,
+        Timer
     ) {
         var $app = $('#app');
+
+        var _timerNewNode = null;
+
+        var _private = {
+            animate: function () {
+                window.requestAnimFrame(_private.animate);
+                loop.render();
+            }
+        };
 
         var loop = {
             renderer: new THREE.WebGLRenderer(),
@@ -31,16 +44,26 @@ define(
                 // Inject the setup DOM element
                 $app.html(this.renderer.domElement);
 
-                // Inject sphere
+                // Build the scene
                 storage.add(new Sphere(50, 16, 16), 1);
-
                 lighting.init();
-
                 this.renderer.render(scene.ref, camera.ref);
+
+                // Begin looping
+                _timerNewNode = new Timer(3000);
+                _private.animate();
             },
 
-            renderer: function () {
-                console.log('looping like a boss');
+            render: function () {
+                var now = Date.now();
+                delta.delay = now - (this.time || now);
+                delta.now = now;
+
+                console.log('looping like a boss', _timerNewNode);
+
+                if (_timerNewNode.expire()) {
+                    // console.log('create new node');
+                }
             }
         };
 
