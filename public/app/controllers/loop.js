@@ -5,7 +5,8 @@ define(
         'models/camera',
         'controllers/scene',
         'models/sphere',
-        'controllers/lighting'
+        'controllers/lighting',
+        'controllers/storage'
     ],
     function (
         $,
@@ -13,7 +14,8 @@ define(
         cameraModel,
         scene,
         Sphere,
-        lighting
+        lighting,
+        storage
     ) {
         var $app = $('#app');
 
@@ -30,11 +32,15 @@ define(
                 $app.html(this.renderer.domElement);
 
                 // Inject sphere
-                var sphere = new Sphere(50, 16, 16);
+                storage.add(new Sphere(50, 16, 16), 1);
 
                 lighting.init();
 
                 this.renderer.render(scene.ref, camera.ref);
+            },
+
+            renderer: function () {
+                console.log('looping like a boss');
             }
         };
 
