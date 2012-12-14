@@ -41,6 +41,7 @@ define(
             this.tweenRed = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'linear');
             this.tweenGreen = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'linear');
             this.tweenBlue = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'linear');
+            this.tweenSize = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'linear');
         };
 
         Sphere.prototype.setMaterial = function () {
@@ -70,16 +71,6 @@ define(
         };
 
         Sphere.prototype.addText = function () {
-            this.tweenRed.set(
-                this.tweenRed.getValue(),
-                0.3,
-                TRANSITION_TIME
-            );
-
-            this.tweenRed.reset();
-        };
-
-        Sphere.prototype.removeText = function () {
             this.tweenGreen.set(
                 this.tweenGreen.getValue(),
                 0.3,
@@ -87,6 +78,16 @@ define(
             );
 
             this.tweenGreen.reset();
+        };
+
+        Sphere.prototype.removeText = function () {
+            this.tweenRed.set(
+                this.tweenRed.getValue(),
+                0.3,
+                TRANSITION_TIME
+            );
+
+            this.tweenRed.reset();
         };
 
         return Sphere;
