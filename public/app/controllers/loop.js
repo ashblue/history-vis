@@ -8,7 +8,8 @@ define(
         'controllers/lighting',
         'controllers/storage',
         'models/delta',
-        'models/timer'
+        'models/timer',
+        'models/renderer'
     ],
     function (
         $,
@@ -19,7 +20,8 @@ define(
         lighting,
         storage,
         delta,
-        Timer
+        Timer,
+        renderer
     ) {
         var $app = $('#app');
 
@@ -33,16 +35,14 @@ define(
         };
 
         var loop = {
-            renderer: new THREE.WebGLRenderer(),
-
             init: function () {
                 // Initialize all necessary objects and setup
                 camera.init();
                 scene.init();
-                this.renderer.setSize(cameraModel.width, cameraModel.height);
+                renderer.setSize(cameraModel.width, cameraModel.height);
 
                 // Inject the setup DOM element
-                $app.html(this.renderer.domElement);
+                $app.html(renderer.domElement);
 
                 // Build the scene
                 storage.add(new Sphere(50, 16, 16), 1);
@@ -72,7 +72,7 @@ define(
                     storage.entities[i].update();
                 }
 
-                this.renderer.render(scene.ref, camera.ref);
+                renderer.render(scene.ref, camera.ref);
             }
         };
 

@@ -3,12 +3,12 @@ define(
     function () {
         var camera = {
             // Viewing window
-            width: 400,
-            height: 300,
+            width: window.innerWidth,
+            height: window.innerHeight,
 
             // Various attributes
             viewAngle: 45,
-            aspect: 400 / 300,
+            aspect: window.innerWidth / window.innerHeight,
             near: 0.1,
             far: 10000
         };
