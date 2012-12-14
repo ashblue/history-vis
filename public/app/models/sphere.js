@@ -11,7 +11,6 @@ define(
          */
         var Sphere = function (radius, segments, rings) {
             var self = this;
-
             this.radius = radius;
             this.segments = segments;
             this.rings = rings;
@@ -25,6 +24,8 @@ define(
                 ), self.material
             );
 
+            console.log(this.mesh, this.material);
+
             scene.ref.add(self.mesh);
         };
 
@@ -36,6 +37,16 @@ define(
             );
 
             return this;
+        };
+
+        Sphere.prototype.update = function () {
+            // Set color
+            this.material.color.setRGB(1, 0.5, 0.5);
+
+            // Set size
+            this.mesh.scale.y = 1.2;
+            this.mesh.scale.x = 1.2;
+
         };
 
         return Sphere;

@@ -47,7 +47,6 @@ define(
                 // Build the scene
                 storage.add(new Sphere(50, 16, 16), 1);
                 lighting.init();
-                this.renderer.render(scene.ref, camera.ref);
 
                 // Begin looping
                 _timerNewNode = new Timer(3000);
@@ -64,6 +63,13 @@ define(
                 if (_timerNewNode.expire()) {
                     // console.log('create new node');
                 }
+
+                var storageLength = storage.entities.length;
+                for (var i = 0; i < storageLength; i++) {
+                    storage.entities[i].update();
+                }
+
+                this.renderer.render(scene.ref, camera.ref);
             }
         };
 
