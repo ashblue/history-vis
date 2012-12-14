@@ -38,10 +38,10 @@ define(
             scene.ref.add(self.mesh);
 
             // Create tweens
-            this.tweenRed = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'linear');
-            this.tweenGreen = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'linear');
-            this.tweenBlue = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'linear');
-            this.tweenSize = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'linear');
+            this.tweenRed = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'quadInOut');
+            this.tweenGreen = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'quadInOut');
+            this.tweenBlue = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'quadInOut');
+            this.tweenSize = new Tween(1, 0, TRANSITION_TIME, 'quadInOut');
         };
 
         Sphere.prototype.setMaterial = function () {
@@ -65,7 +65,8 @@ define(
             //this.material.color.setRGB(1, 0.5, 0.5);
 
             // Set size
-            //this.mesh.scale.y = 1.2;
+            // tweenSize
+            this.mesh.scale.x = this.mesh.scale.y = this.tweenSize.getValue();
             //this.mesh.scale.x = 1.2;
 
         };
@@ -77,7 +78,14 @@ define(
                 TRANSITION_TIME
             );
 
+            this.tweenSize.set(
+                this.tweenSize.getValue(),
+                0.3,
+                TRANSITION_TIME
+            );
+
             this.tweenGreen.reset();
+            this.tweenSize.reset();
         };
 
         Sphere.prototype.removeText = function () {
@@ -87,7 +95,14 @@ define(
                 TRANSITION_TIME
             );
 
+            this.tweenSize.set(
+                this.tweenSize.getValue(),
+                -0.3,
+                TRANSITION_TIME
+            );
+
             this.tweenRed.reset();
+            this.tweenSize.reset();
         };
 
         return Sphere;

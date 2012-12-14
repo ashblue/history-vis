@@ -62,7 +62,7 @@ define(
 
                 if (_timerNewNode.expire()) {
                     console.log('create new node');
-                    storage.entities[0].removeText();
+                    //storage.entities[0].removeText();
                     storage.entities[0].addText();
                     _timerNewNode.reset();
                 }
