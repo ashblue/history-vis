@@ -58,10 +58,13 @@ define(
                 delta.delay = now - (this.time || now);
                 delta.now = now;
 
-                console.log('looping like a boss', _timerNewNode);
+                console.log('looping like a boss');
 
                 if (_timerNewNode.expire()) {
-                    // console.log('create new node');
+                    console.log('create new node');
+                    storage.entities[0].removeText();
+                    storage.entities[0].addText();
+                    _timerNewNode.reset();
                 }
 
                 var storageLength = storage.entities.length;
