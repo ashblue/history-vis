@@ -63,11 +63,13 @@ define(
 
             var material = new THREE.MeshBasicMaterial({
                 map: texture,
-                transparent: true
+                transparent: true,
+                doubleSided: true
             });
 
+            material.side = THREE.DoubleSide;
+
             this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(canvas.width / 6, canvas.height / 6), material);
-            this.mesh.doubleSided = true;
         };
 
         return Text;

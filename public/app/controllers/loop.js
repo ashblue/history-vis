@@ -21,12 +21,15 @@ define(
         Timer,
         renderer
     ) {
+        var ROTATE_DEFAULT = new THREE.Vector3(0,0,0);
+
         var $app = $('#app');
 
         var _index = 0;
         var _length = storage.revisions.length;
         var _revision;
         var _timer = new Timer(2000);
+        var _rotateCount = Date.now();
 
         function animate() {
         	loop.render();
@@ -71,6 +74,14 @@ define(
 
                 //physics.update();
                 storage.updateEntities();
+
+                if (camera.rotate === true) {
+                    var timer = _rotateCount * 0.0005;
+                    camera.ref.position.x = Math.cos( timer ) * 200;
+                    camera.ref.position.z = Math.sin( timer ) * 200;
+                    camera.ref.lookAt(ROTATE_DEFAULT);
+                    _rotateCount += 20;
+                }
 
                 renderer.render(scene.ref, camera.ref);
             }

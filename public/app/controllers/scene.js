@@ -11,7 +11,7 @@ define(
 
             init: function () {
                 this.ref.add(camera.ref);
-                camera.ref.position.z = 300;
+                camera.setScene(this.ref);
             }
         };
 

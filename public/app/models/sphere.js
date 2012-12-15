@@ -110,7 +110,7 @@ define(
             );
 
             // Set size
-            this.mesh.scale.x = this.mesh.scale.y = Math.min(this.tweenSize.getValue(), MAX_RADIUS);
+            this.mesh.scale.x = this.mesh.scale.y = this.mesh.scale.z = Math.min(this.tweenSize.getValue(), MAX_RADIUS);
 
             // Set speed
         };
