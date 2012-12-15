@@ -1,11 +1,13 @@
 define(
     [
         'controllers/scene',
+        'models/text',
         'lib/tween'
     ],
 
     function (
         scene,
+        Text,
         Tween
     ) {
         var DEFAULT_HEX_COLOR = 0xFFFFFF;
@@ -59,6 +61,10 @@ define(
                 ), self.material
             );
 
+            // Create text
+            //this.text = new Text('test');
+
+            // Add to scene
             scene.ref.add(this.mesh);
 
             if ( count > 0 ) {
