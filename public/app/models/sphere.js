@@ -61,10 +61,7 @@ define(
                 ), self.material
             );
 
-            // Create text
-            //this.text = new Text('test');
-
-            // Add to scene
+            // Add sphere to scene
             scene.ref.add(this.mesh);
 
             if ( count > 0 ) {
@@ -84,7 +81,14 @@ define(
 
             count++;
             lastRadius = radius;
-console.log('new sphere:', size, radius, segments);
+            console.log('new sphere:', size, radius, segments);
+
+            // Create text
+            this.text = new Text('test');
+            this.text.mesh.position.x = this.mesh.position.x;
+            this.text.mesh.position.y = 2 * radius + this.mesh.position.y;
+            this.text.mesh.position.z = this.mesh.position.z + 30;
+            scene.ref.add(this.text.mesh);
         };
 
         Sphere.prototype.setMaterial = function () {
