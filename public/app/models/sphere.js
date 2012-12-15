@@ -8,7 +8,7 @@ define(
         scene,
         Tween
     ) {
-        var DEFAULT_HEX_COLOR = 0x999999;
+        var DEFAULT_HEX_COLOR = 0xFFFFFF;
 
         var DEFAULT_RGB_COLOR = 0.5;
 
@@ -17,22 +17,34 @@ define(
         var x = 0;
         var y = 0;
         var z = 0;
+        var angle = 0;
+        var dist = 0;
 
 		var MAX_RADIUS = 50;
 		var MIN_RADIUS = 5;
 
 		var count = 0;
-		var last;
+		var lastRadius;
+
+		function getRadius( size ) {
+			return Math.min( Math.max( size / 100, MIN_RADIUS ), MAX_RADIUS );
+		}
 
         /**
          * @todo Break up logic into storage
          */
-        var Sphere = function ( size ) {
+        var Sphere = function( size ) {
             var self = this;
-            var radius = Math.min( Math.max( size / 100, MIN_RADIUS ), MAX_RADIUS );
+            var radius = getRadius( size );
             var segments = Math.max( radius / 2, 15 );
             var rings = Math.max( radius / 2, 15 );
-console.log('new sphere:', size, radius, segments);
+
+            // calculated from distance and angle from other spheres
+            this.speed = {
+	            x: 0,
+	            y: 0
+            };
+
             // Set general properties
             this.radius = radius;
             this.segments = segments;
@@ -50,8 +62,10 @@ console.log('new sphere:', size, radius, segments);
             scene.ref.add(this.mesh);
 
             if ( count > 0 ) {
-	            x += last.radius + radius / 2 + MIN_RADIUS;
-	            y += last.radius + radius / 2 + MIN_RADIUS;
+            	angle = Math.random() * Math.PI * 2;
+            	dist = lastRadius + radius + MIN_RADIUS;
+	            x += Math.sin( angle ) * dist;
+	            y += Math.cos( angle ) * dist;
 	            this.mesh.position.x = x;
 	            this.mesh.position.y = y;
             }
@@ -63,7 +77,8 @@ console.log('new sphere:', size, radius, segments);
             this.tweenSize = new Tween(1, 0, TRANSITION_TIME, 'quadInOut');
 
             count++;
-            last = this;
+            lastRadius = radius;
+console.log('new sphere:', size, radius, segments);
         };
 
         Sphere.prototype.setMaterial = function () {
@@ -85,7 +100,9 @@ console.log('new sphere:', size, radius, segments);
             );
 
             // Set size
-            this.mesh.scale.x = this.mesh.scale.y = this.tweenSize.getValue();
+            this.mesh.scale.x = this.mesh.scale.y = Math.min(this.tweenSize.getValue(), MAX_RADIUS);
+
+            // Set speed
         };
 
         Sphere.prototype.grow = function () {

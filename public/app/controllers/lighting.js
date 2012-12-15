@@ -12,9 +12,9 @@ define(
                   new THREE.PointLight(0xFFFFFF);
 
                 // set its position
-                pointLight.position.x = 10;
-                pointLight.position.y = 50;
-                pointLight.position.z = 130;
+                pointLight.position.x = 0;
+                pointLight.position.y = 0;
+                pointLight.position.z = 300;
 
                 // add to the scene
                 scene.ref.add(pointLight);

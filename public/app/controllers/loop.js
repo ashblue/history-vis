@@ -26,7 +26,7 @@ define(
         var _index = 0;
         var _length = storage.revisions.length;
         var _revision;
-        var _timer = new Timer(3000);
+        var _timer = new Timer(2000);
 
         function animate() {
         	loop.render();
@@ -69,6 +69,7 @@ define(
 	                _timer.start();
                 }
 
+                //physics.update();
                 storage.updateEntities();
 
                 renderer.render(scene.ref, camera.ref);
