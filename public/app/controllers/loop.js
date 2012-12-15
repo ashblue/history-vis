@@ -4,7 +4,6 @@ define(
         'controllers/camera',
         'models/camera',
         'controllers/scene',
-        'models/sphere',
         'controllers/lighting',
         'controllers/storage',
         'models/delta',
@@ -16,7 +15,6 @@ define(
         camera,
         cameraModel,
         scene,
-        Sphere,
         lighting,
         storage,
         delta,
@@ -25,52 +23,53 @@ define(
     ) {
         var $app = $('#app');
 
-        var _timerNewNode = null;
+        var _index = 0;
+        var _length = storage.revisions.length;
+        var _revision;
+        var _timer = new Timer(3000);
 
-        var _private = {
-            animate: function () {
-                window.requestAnimFrame(_private.animate);
-                loop.render();
-            }
-        };
+        function animate() {
+        	loop.render();
+            window.requestAnimFrame(animate);
+        }
 
         var loop = {
             init: function () {
                 // Initialize all necessary objects and setup
                 camera.init();
+                lighting.init();
                 scene.init();
+
                 renderer.setSize(cameraModel.width, cameraModel.height);
 
                 // Inject the setup DOM element
                 $app.html(renderer.domElement);
 
-                // Build the scene
-                storage.add(new Sphere(50, 16, 16), 1);
-                lighting.init();
-
                 // Begin looping
-                _timerNewNode = new Timer(3000);
-                _private.animate();
+                animate();
             },
 
-            render: function () {
-                var now = Date.now();
-                delta.delay = now - (this.time || now);
-                delta.now = now;
+            render: function() {
+            	delta.update();
+            	_timer.tick();
 
-                console.log('looping like a boss');
+                console.log('looping');
 
-                if (_timerNewNode.expire()) {
-                    console.log('create new node');
-                    //storage.entities[0].removeText();
-                    storage.entities[0].addText();
-                    _timerNewNode.reset();
+                if (_index === 0 || _index < _length && _timer.running && _timer.expired) {
+                	_revision = storage.revisions[_index];
+
+                	if (!storage.articleExists(_revision.title)) {
+	                	storage.addArticle(_revision);
+
+                	} else {
+	                	storage.updateArticle(_revision);
+                	}
+
+                	_index++;
+	                _timer.start();
                 }
 
-                var storageLength = storage.entities.length;
-                for (var i = 0; i < storageLength; i++) {
-                    storage.entities[i].update();
-                }
+                storage.updateEntities();
 
                 renderer.render(scene.ref, camera.ref);
             }

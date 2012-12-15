@@ -1,29 +1,19 @@
 define(
     [
-        'controllers/scene'
+        'models/article'
     ],
 
-    function (scene) {
+    function(
+    	Article
+    ) {
         var storage = {
-            library: {},
+            articles: {},
             entities: [],
 
             // Revision dump from 12/13/2012 @ 3:52 PM PST
-            // See: http://www.mediawiki.org/wiki/API:Recentchanges#Example
-            // Url: http://revisualize.wikia.com/api.php?action=query&list=recentchanges&rclimit=500&rcdir=newer&rctype=new|edit&rcshow=!bot|!redirect&rcprop=ids|timestamp|title|sizes&format=json
+            // See: http://www.mediawiki.org/wiki/API:Recentchanges
+            // Url: http://revisualize.wikia.com/api.php?action=query&list=recentchanges&rclimit=500&rcdir=newer&rctype=new|edit&rcshow=!bot|!redirect&rcprop=ids|timestamp|title|sizes&rcnamespace=0&format=json
             revisions: [
-	            {
-	                "type": "new",
-	                "ns": 1201,
-	                "title": "Thread:Kyle Florence/@comment-Sarah Manley-20121213194416",
-	                "rcid": 3,
-	                "pageid": 2061,
-	                "revid": 3988,
-	                "old_revid": 0,
-	                "oldlen": 0,
-	                "newlen": 1424,
-	                "timestamp": "2012-12-13T19:44:16Z"
-	            },
 	            {
 	                "type": "edit",
 	                "ns": 0,
@@ -216,8 +206,7 @@ define(
 	                "newlen": 427,
 	                "timestamp": "2012-12-13T19:58:50Z"
 	            }
-	        ],
-
+            ],
 
             // Links dump from 12/13/2012 @ 5:44 PM PST
             // Url: http://revisualize.wikia.com/api.php?action=query&generator=recentchanges&grclimit=500&grcdir=newer&grctype=new|edit&grcshow=!bot|!redirect&grcprop=ids|timestamp|title|sizes&prop=links&format=json
@@ -280,13 +269,44 @@ define(
 	            }
 	        },
 
-            add: function (ref, id) {
-                this.entities.push(ref);
-                this.library[id] = ref;
+            addArticle: function( title, revision ) {
+            	var article;
+
+            	if ( typeof title === 'object' ) {
+	            	revision = title;
+	            	title = revision.title;
+            	}
+
+            	article = new Article( revision );
+
+                this.entities.push( article.entity );
+                this.articles[ title ] = article;
             },
 
-            get: function (id) {
-                return this.library[id];
+            articleExists: function( title ) {
+	            return !!this.getArticle( title );
+            },
+
+            getArticle: function( title ) {
+                return this.articles[ title ];
+            },
+
+            updateArticle: function( title, revision ) {
+            	if ( typeof title === 'object' ) {
+	            	revision = title;
+	            	title = revision.title;
+            	}
+
+	            this.getArticle( title ).update( revision );
+            },
+
+            updateEntities: function() {
+	            var i = 0,
+	            	storageLength = this.entities.length;
+
+                for ( ; i < storageLength; i++ ) {
+                    this.entities[ i ].update();
+                }
             }
         };
 

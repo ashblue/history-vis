@@ -5,27 +5,26 @@ define(
     function (
         delta
     ) {
-        var Timer = function (delay) {
-            this.setDelay(delay);
-        };
-
-        Timer.prototype.reset = function () {
-            this.start = delta.now;
-            this.end = delta.now + this.delay;
-        };
-
-        Timer.prototype.setDelay = function (delay) {
+        var Timer = function( delay ) {
             this.delay = delay;
-            this.reset();
+            this.expired = false;
+            this.running = false;
         };
 
-        Timer.prototype.expire = function () {
-            if (delta.now >= this.end) {
-                return true;
-            }
+        Timer.prototype.start = function() {
+        	this.startTime = delta.now;
+        	this.endTime = this.startTime + this.delay;
+	        this.running = true;
+        }
 
-            return false;
-        };
+        Timer.prototype.stop = function() {
+        	this.endTime = delta.now;
+	        this.running = false;
+        }
+
+        Timer.prototype.tick = function() {
+	        this.expired = delta.now >= this.endTime;
+        }
 
         return Timer;
     }

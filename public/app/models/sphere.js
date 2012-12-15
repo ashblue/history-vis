@@ -14,12 +14,25 @@ define(
 
         var TRANSITION_TIME = 2000;
 
+        var x = 0;
+        var y = 0;
+        var z = 0;
+
+		var MAX_RADIUS = 50;
+		var MIN_RADIUS = 5;
+
+		var count = 0;
+		var last;
+
         /**
          * @todo Break up logic into storage
          */
-        var Sphere = function (radius, segments, rings) {
+        var Sphere = function ( size ) {
             var self = this;
-
+            var radius = Math.min( Math.max( size / 100, MIN_RADIUS ), MAX_RADIUS );
+            var segments = Math.max( radius / 2, 15 );
+            var rings = Math.max( radius / 2, 15 );
+console.log('new sphere:', size, radius, segments);
             // Set general properties
             this.radius = radius;
             this.segments = segments;
@@ -34,14 +47,23 @@ define(
                 ), self.material
             );
 
-            // Add to scene
-            scene.ref.add(self.mesh);
+            scene.ref.add(this.mesh);
+
+            if ( count > 0 ) {
+	            x += last.radius + radius / 2 + MIN_RADIUS;
+	            y += last.radius + radius / 2 + MIN_RADIUS;
+	            this.mesh.position.x = x;
+	            this.mesh.position.y = y;
+            }
 
             // Create tweens
             this.tweenRed = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'quadInOut');
             this.tweenGreen = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'quadInOut');
             this.tweenBlue = new Tween(DEFAULT_RGB_COLOR, 0, TRANSITION_TIME, 'quadInOut');
             this.tweenSize = new Tween(1, 0, TRANSITION_TIME, 'quadInOut');
+
+            count++;
+            last = this;
         };
 
         Sphere.prototype.setMaterial = function () {
@@ -62,16 +84,11 @@ define(
                 this.tweenBlue.getValue()
             );
 
-            //this.material.color.setRGB(1, 0.5, 0.5);
-
             // Set size
-            // tweenSize
             this.mesh.scale.x = this.mesh.scale.y = this.tweenSize.getValue();
-            //this.mesh.scale.x = 1.2;
-
         };
 
-        Sphere.prototype.addText = function () {
+        Sphere.prototype.grow = function () {
             this.tweenGreen.set(
                 this.tweenGreen.getValue(),
                 0.3,
@@ -88,7 +105,7 @@ define(
             this.tweenSize.reset();
         };
 
-        Sphere.prototype.removeText = function () {
+        Sphere.prototype.shrink = function () {
             this.tweenRed.set(
                 this.tweenRed.getValue(),
                 0.3,
