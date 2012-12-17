@@ -3,7 +3,7 @@ var express = require('express'),
     app = express();
 
 // Constants
-var PORT = 8080;
+var PORT = process.env.PORT || 8080;
 
 // Server configuration
 var server = {
@@ -12,7 +12,7 @@ var server = {
             .setRoot('public/index.html')
             .setFolders('/public');
 
-        console.log('Listening on ' + PORT)
+        console.log('Listening on ' + PORT);
         app.listen(PORT);
     },
 
