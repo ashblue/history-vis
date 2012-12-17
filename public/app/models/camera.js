@@ -9,7 +9,7 @@ define(
             // Various attributes
             viewAngle: 45,
             aspect: window.innerWidth / window.innerHeight,
-            near: 0.1,
+            near: 1,
             far: 10000
         };
 

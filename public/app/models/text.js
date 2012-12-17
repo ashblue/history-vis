@@ -15,7 +15,7 @@ define(
         /**
          * @todo Break up logic into storage
          */
-        var Text = function (string, entity) {
+        var Text = function (string, sphere) {
             // Basic setup
             var canvas = document.createElement('canvas'),
                 ctx = canvas.getContext('2d'),
@@ -29,8 +29,6 @@ define(
             }
 
             ctx.font = FONT_STYLE;
-
-			this.entity = entity;
 
             // Determine width output of the text
             this.size = ctx.measureText(string);
@@ -71,17 +69,17 @@ define(
             material.side = THREE.DoubleSide;
 
             this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(canvas.width / 6, canvas.height / 6), material);
+			this.sphere = sphere;
 			this.update();
-            
 
 			scene.ref.add(this.mesh);
         };
 
 		Text.prototype.update = function() {
-			this.mesh.position.x = this.entity.mesh.position.x;
-            this.mesh.position.y = this.entity.mesh.position.y
-				+ ( this.entity.mesh.geometry.radius * this.entity.mesh.scale.y ) + this.mesh.geometry.height;
-			this.mesh.position.z = this.entity.mesh.position.z + 30;
+			this.mesh.position.x = this.sphere.mesh.position.x;
+            this.mesh.position.y = this.sphere.mesh.position.y
+				+ ( this.sphere.mesh.geometry.radius * this.sphere.mesh.scale.y ) + this.mesh.geometry.height;
+			this.mesh.position.z = this.sphere.mesh.position.z + 30;
 		};
 
         return Text;

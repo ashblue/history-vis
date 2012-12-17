@@ -58,8 +58,6 @@ define(
             	delta.update();
             	_timer.tick();
 
-                console.log('looping');
-
                 if (_index === 0 || _index < _length && _timer.running && _timer.expired) {
                 	_revision = storage.revisions[_index];
 

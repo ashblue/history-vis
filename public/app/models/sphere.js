@@ -26,18 +26,20 @@ define(
 
 		// Check if one sphere collides with another
 		function collides( x, y, radius ) {
-			var entity, dx, dy, radii, title,
-				i = 0,
-				length = storage.entities.length;
+			var article, dx, dy, radii, title,
+				i = 0;
 
-			for ( ; i < length; i++ ) {
-				entity = storage.entities[ i ];
-				dx = entity.mesh.position.x - x;
-				dy = entity.mesh.position.y - y;
-				radii = radius + ( entity.mesh.geometry.radius * entity.mesh.scale.x );
+			for ( title in storage.articles ) {
+				article = storage.articles[ title ];
 
-				if ( ( dx * dx )  + ( dy * dy ) < radii * radii ) {
-					return true;
+				if ( article ) {
+					dx = article.sphere.mesh.position.x - x;
+					dy = article.sphere.mesh.position.y - y;
+					radii = radius + ( article.sphere.mesh.geometry.radius * article.sphere.mesh.scale.x );
+
+					if ( ( dx * dx )  + ( dy * dy ) < radii * radii ) {
+						return true;
+					}
 				}
 			}
 
@@ -56,7 +58,10 @@ define(
 				ny = y + Math.sin( angle ) * distance;
 
 				if ( !collides( nx, ny, radius ) ) {
-				    return { x: nx, y: ny };
+				    return {
+						x: nx,
+						y: ny
+					};
 
 				} else {
 					return randomPoint( x, y, radius );
@@ -110,7 +115,6 @@ define(
 
             count++;
             lastRadius = radius;
-            console.log('new sphere:', this);
         };
 
         Sphere.prototype.grow = function () {

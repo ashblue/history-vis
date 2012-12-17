@@ -1,8 +1,16 @@
 define(
-    [],
-    function() {
+    [
+		'models/line'
+	],
+    function(
+		Line
+	) {
+		var _linksToAdd = [];
+		var _linksToAddCount = 0;
+
         var storage = {
             articles: {},
+			lines: {},
             entities: [],
 
             // Revision dump from 12/13/2012 @ 3:52 PM PST
@@ -265,9 +273,34 @@ define(
             },
 
             addArticle: function( article ) {
-                this.entities.push( article.entity );
+				var linkFrom = this.links[ article.id ];
+
+                this.entities.push( article.sphere );
+				this.entities.push( article.text );
+
                 this.articles[ article.title ] = article;
+
+				if ( linkFrom && linkFrom.links ) {
+					_linksToAdd.push( linkFrom );
+					_linksToAddCount += linkFrom.links.length;
+				}
             },
+
+			addLine: function( line ) {
+				this.entities.push( line );
+
+				if ( !this.lines[ line.articleFrom.title ] ) {
+					this.lines[ line.articleFrom.title ] = {};
+				}
+
+				if ( !this.lines[ line.articleTo.title ] ) {
+					this.lines[ line.articleTo.title ] = {};
+				}
+
+				this.lines[ line.articleFrom.title ][ line.articleTo.title ]
+					= this.lines[ line.articleTo.title ][ line.articleFrom.title ]
+					= line;
+			},
 
             articleExists: function( title ) {
                 return !!this.getArticle( title );
@@ -276,6 +309,15 @@ define(
             getArticle: function( title ) {
                 return this.articles[ title ];
             },
+
+			getLine: function( fromTitle, toTitle ) {
+				var line;
+				return ( line = this.lines[ fromTitle ] ) && line[ toTitle ];
+			},
+
+			lineExists: function( fromTitle, toTitle ) {
+				return !!this.getLine( fromTitle, toTitle );
+			},
 
             updateArticle: function( title, revision ) {
                 var article;
@@ -293,11 +335,36 @@ define(
             },
 
             update: function() {
-                var title;
+                var articleFrom, articleTo, entitiesLength, j, l, linkFrom, linkTo,
+					i = 0,
+					linksLength = _linksToAdd.length;
 
-                for ( title in this.articles ) {
-                    this.articles[ title ].update();
-                }
+				if ( _linksToAddCount && linksLength ) {
+					for ( ; i < linksLength; i++ ) {
+						linkFrom = _linksToAdd[ i ];
+
+						if ( linkFrom.links ) {
+							articleFrom = this.getArticle( linkFrom.title );
+
+							for ( j = 0, l = linkFrom.links.length; j < l; j++ ) {
+								linkTo = linkFrom.links[ j ];
+								articleTo = this.getArticle( linkTo.title );
+
+								if ( articleTo ) {
+									if ( !this.lineExists( linkFrom.title, linkTo.title ) ) {
+										this.addLine( new Line( articleFrom, articleTo ) );
+									}
+
+									_linksToAddCount--;
+								}
+							}
+						}
+					}
+				}
+
+				for ( i = 0, entitiesLength = this.entities.length; i < entitiesLength; i++ ) {
+					this.entities[ i ].update();
+				}
             }
         };
 
