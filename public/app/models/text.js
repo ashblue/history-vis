@@ -16,6 +16,8 @@ define(
          * @todo Break up logic into storage
          */
         var Text = function (string, sphere) {
+			this.sphere = sphere;
+
             // Basic setup
             var canvas = document.createElement('canvas'),
                 ctx = canvas.getContext('2d'),
@@ -69,17 +71,18 @@ define(
             material.side = THREE.DoubleSide;
 
             this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(canvas.width / 6, canvas.height / 6), material);
-			this.sphere = sphere;
+
+			this.mesh.position.x = this.sphere.mesh.position.x;
+			this.mesh.position.z = this.sphere.mesh.position.z + 30;
+
 			this.update();
 
 			scene.ref.add(this.mesh);
         };
 
 		Text.prototype.update = function() {
-			this.mesh.position.x = this.sphere.mesh.position.x;
             this.mesh.position.y = this.sphere.mesh.position.y
 				+ ( this.sphere.mesh.geometry.radius * this.sphere.mesh.scale.y ) + this.mesh.geometry.height;
-			this.mesh.position.z = this.sphere.mesh.position.z + 30;
 		};
 
         return Text;

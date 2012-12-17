@@ -10,8 +10,6 @@ define(
 		storage,
         Tween
     ) {
-        var DEFAULT_HEX_COLOR = 0xFFFFFF;
-        var DEFAULT_RGB_COLOR = 0.5;
         var TRANSITION_TIME = 2000;
 		var MAX_RADIUS = 50;
 		var MIN_RADIUS = 5;
@@ -91,7 +89,8 @@ define(
                     rings
                 ),
 				new THREE.MeshLambertMaterial({
-					color: DEFAULT_HEX_COLOR
+					color: 0xffffff,
+					shading: THREE.FlatShading
             }));
 
             // Create tweens

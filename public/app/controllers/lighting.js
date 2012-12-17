@@ -8,16 +8,11 @@ define(
     ) {
         var lighting = {
             init: function () {
-                var pointLight =
-                  new THREE.PointLight(0xFFFFFF);
+                var light = new THREE.DirectionalLight( 0xffffff );
 
-                // set its position
-                pointLight.position.x = 0;
-                pointLight.position.y = 0;
-                pointLight.position.z = 300;
+				light.position.set( 0, 0, 1 );
 
-                // add to the scene
-                scene.ref.add(pointLight);
+                scene.ref.add( light );
             }
         };
 

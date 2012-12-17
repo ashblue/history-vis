@@ -8,7 +8,9 @@ define(
 			this.id = revision.pageid;
 			this.sphere = new Sphere( revision.newlen );
 			this.revision = revision;
-			this.text = new Text( revision.title, this.sphere );
+
+// FIXME: add text back when it doesn't look so terrible
+//			this.text = new Text( revision.title, this.sphere );
 			this.title = revision.title;
 console.log('added article:', this);
 		};
