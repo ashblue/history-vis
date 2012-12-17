@@ -7,6 +7,7 @@ define(
         'controllers/lighting',
         'controllers/storage',
 		'models/article',
+		'models/data',
         'models/delta',
         'models/timer',
         'models/renderer'
@@ -19,6 +20,7 @@ define(
         lighting,
         storage,
 		Article,
+		data,
         delta,
         Timer,
         renderer
@@ -28,7 +30,6 @@ define(
         var $app = $('#app');
 
         var _index = 0;
-        var _length = storage.revisions.length;
         var _revision;
         var _timer = new Timer(2000);
         var _rotateCount = Date.now();
@@ -58,18 +59,18 @@ define(
             	delta.update();
             	_timer.tick();
 
-                if (_index === 0 || _index < _length && _timer.running && _timer.expired) {
-                	_revision = storage.revisions[_index];
+				console.log('looping');
 
-                	if (!storage.articleExists(_revision.title)) {
-	                	storage.addArticle(new Article(_revision));
+                if ( _index === 0 || _timer.running && _timer.expired ) {
+					if ( ( _revision = storage.getRevision( _index ) ) ) {
+						storage.addRevision( _revision );
 
-                	} else {
-	                	storage.updateArticle(_revision);
-                	}
+			            _timer.start();
+						_index++;
 
-                	_index++;
-	                _timer.start();
+					} else {
+						_timer.stop();
+					}
                 }
 
                 storage.update();

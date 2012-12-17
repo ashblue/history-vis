@@ -1,282 +1,93 @@
 define(
     [
-		'models/line'
+		'models/article',
+		'models/data',
+		'models/line',
+		'models/sphere',
+		'models/text'
 	],
     function(
-		Line
+		Article,
+		data,
+		Line,
+		Sphere,
+		Text
 	) {
+		var _articleCount = 0;
+		var _lastPoint = { x: 0, y: 0, z: 0 };
+		var _lastRadius = 0;
 		var _linksToAdd = [];
 		var _linksToAddCount = 0;
+
+		var MAX_RADIUS = 50;
+		var MIN_RADIUS = 5;
+		var PI2 = Math.PI * 2;
+
+		function getRadius( size ) {
+			return Math.min( Math.max( size / 100, MIN_RADIUS ), MAX_RADIUS );
+		}
+
+		// Check if one sphere collides with another
+		function collides( x, y, radius ) {
+			var article, dx, dy, radii, title,
+				i = 0;
+
+			for ( title in this.articles ) {
+				if ( article = this.getArticle( title ) ) {
+					dx = article.sphere.mesh.position.x - x;
+					dy = article.sphere.mesh.position.y - y;
+					radii = radius + ( article.sphere.mesh.geometry.radius * article.sphere.mesh.scale.x );
+
+					if ( ( dx * dx )  + ( dy * dy ) < radii * radii ) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		// Generate a random point around the center that doesn't collide
+		// with any existing spheres
+		function getRandomPoint( radius ) {
+        	var angle, nx, ny,
+				distance = _lastRadius + radius + MAX_RADIUS,
+				x = _lastPoint.x,
+				y = _lastPoint.y,
+				z = _lastPoint.z;
+
+			if ( _articleCount === 0 ) {
+				return _lastPoint;
+			}
+
+			return (function getPoint() {
+				angle = Math.random() * PI2;
+				nx = x + Math.cos( angle ) * distance;
+				ny = y + Math.sin( angle ) * distance;
+
+				if ( !collides( nx, ny, radius ) ) {
+				    return {
+						x: nx,
+						y: ny,
+						z: z
+					};
+
+				} else {
+					return getPoint();
+				}
+			}());
+		}
 
         var storage = {
             articles: {},
 			lines: {},
             entities: [],
 
-            // Revision dump from 12/13/2012 @ 3:52 PM PST
-            // See: http://www.mediawiki.org/wiki/API:Recentchanges
-            // Url: http://revisualize.wikia.com/api.php?action=query&list=recentchanges&rclimit=500&rcdir=newer&rctype=new|edit&rcshow=!bot|!redirect&rcprop=ids|timestamp|title|sizes&rcnamespace=0&format=json
-            revisions: [
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Revisualize Wiki",
-                    "rcid": 6,
-                    "pageid": 1461,
-                    "revid": 3990,
-                    "old_revid": 3984,
-                    "oldlen": 695,
-                    "newlen": 558,
-                    "timestamp": "2012-12-13T19:44:38Z"
-                },
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Revisualize Wiki",
-                    "rcid": 7,
-                    "pageid": 1461,
-                    "revid": 3991,
-                    "old_revid": 3990,
-                    "oldlen": 558,
-                    "newlen": 230,
-                    "timestamp": "2012-12-13T19:46:42Z"
-                },
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Revisualize Wiki",
-                    "rcid": 8,
-                    "pageid": 1461,
-                    "revid": 3992,
-                    "old_revid": 3991,
-                    "oldlen": 230,
-                    "newlen": 342,
-                    "timestamp": "2012-12-13T19:48:07Z"
-                },
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Revisualize Wiki",
-                    "rcid": 9,
-                    "pageid": 1461,
-                    "revid": 3993,
-                    "old_revid": 3992,
-                    "oldlen": 342,
-                    "newlen": 322,
-                    "timestamp": "2012-12-13T19:48:46Z"
-                },
-                {
-                    "type": "new",
-                    "ns": 0,
-                    "title": "Example Page 1",
-                    "rcid": 10,
-                    "pageid": 2062,
-                    "revid": 3994,
-                    "old_revid": 0,
-                    "oldlen": 0,
-                    "newlen": 20,
-                    "timestamp": "2012-12-13T19:49:07Z"
-                },
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Example Page 1",
-                    "rcid": 11,
-                    "pageid": 2062,
-                    "revid": 3995,
-                    "old_revid": 3994,
-                    "oldlen": 20,
-                    "newlen": 288,
-                    "timestamp": "2012-12-13T19:50:19Z"
-                },
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Example Page 1",
-                    "rcid": 12,
-                    "pageid": 2062,
-                    "revid": 3996,
-                    "old_revid": 3995,
-                    "oldlen": 288,
-                    "newlen": 262,
-                    "timestamp": "2012-12-13T19:50:38Z"
-                },
-                {
-                    "type": "new",
-                    "ns": 0,
-                    "title": "Example Page 2",
-                    "rcid": 13,
-                    "pageid": 2063,
-                    "revid": 3997,
-                    "old_revid": 0,
-                    "oldlen": 0,
-                    "newlen": 88,
-                    "timestamp": "2012-12-13T19:51:18Z"
-                },
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Example Page 2",
-                    "rcid": 14,
-                    "pageid": 2063,
-                    "revid": 3998,
-                    "old_revid": 3997,
-                    "oldlen": 88,
-                    "newlen": 145,
-                    "timestamp": "2012-12-13T19:52:14Z"
-                },
-                {
-                    "type": "new",
-                    "ns": 0,
-                    "title": "Example Page 3",
-                    "rcid": 15,
-                    "pageid": 2064,
-                    "revid": 3999,
-                    "old_revid": 0,
-                    "oldlen": 0,
-                    "newlen": 132,
-                    "timestamp": "2012-12-13T19:53:25Z"
-                },
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Example Page 3",
-                    "rcid": 16,
-                    "pageid": 2064,
-                    "revid": 4000,
-                    "old_revid": 3999,
-                    "oldlen": 132,
-                    "newlen": 160,
-                    "timestamp": "2012-12-13T19:54:40Z"
-                },
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Example Page 3",
-                    "rcid": 17,
-                    "pageid": 2064,
-                    "revid": 4001,
-                    "old_revid": 4000,
-                    "oldlen": 160,
-                    "newlen": 132,
-                    "timestamp": "2012-12-13T19:55:03Z"
-                },
-                {
-                    "type": "new",
-                    "ns": 0,
-                    "title": "Bacon Ipsum",
-                    "rcid": 18,
-                    "pageid": 2065,
-                    "revid": 4002,
-                    "old_revid": 0,
-                    "oldlen": 0,
-                    "newlen": 5995,
-                    "timestamp": "2012-12-13T19:55:19Z"
-                },
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Bacon Ipsum",
-                    "rcid": 19,
-                    "pageid": 2065,
-                    "revid": 4003,
-                    "old_revid": 4002,
-                    "oldlen": 5995,
-                    "newlen": 4522,
-                    "timestamp": "2012-12-13T19:56:12Z"
-                },
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Bacon Ipsum",
-                    "rcid": 20,
-                    "pageid": 2065,
-                    "revid": 4004,
-                    "old_revid": 4003,
-                    "oldlen": 4522,
-                    "newlen": 3526,
-                    "timestamp": "2012-12-13T19:57:21Z"
-                },
-                {
-                    "type": "edit",
-                    "ns": 0,
-                    "title": "Revisualize Wiki",
-                    "rcid": 21,
-                    "pageid": 1461,
-                    "revid": 4005,
-                    "old_revid": 3993,
-                    "oldlen": 322,
-                    "newlen": 427,
-                    "timestamp": "2012-12-13T19:58:50Z"
-                }
-            ],
-
-            // Links dump from 12/13/2012 @ 5:44 PM PST
-            // Url: http://revisualize.wikia.com/api.php?action=query&generator=recentchanges&grclimit=500&grcdir=newer&grctype=new|edit&grcshow=!bot|!redirect&grcprop=ids|timestamp|title|sizes&prop=links&format=json
-            links: {
-                "1461": {
-                    "pageid": 1461,
-                    "ns": 0,
-                    "title": "Revisualize Wiki",
-                    "links": [
-                        {
-                            "ns": 0,
-                            "title": "Bacon Ipsum"
-                        }
-                    ]
-                },
-                "2061": {
-                    "pageid": 2061,
-                    "ns": 1201,
-                    "title": "Thread:Kyle Florence/@comment-Sarah Manley-20121213194416"
-                },
-                "2062": {
-                    "pageid": 2062,
-                    "ns": 0,
-                    "title": "Example Page 1"
-                },
-                "2063": {
-                    "pageid": 2063,
-                    "ns": 0,
-                    "title": "Example Page 2",
-                    "links": [
-                        {
-                            "ns": 0,
-                            "title": "Example Page 1"
-                        }
-                    ]
-                },
-                "2064": {
-                    "pageid": 2064,
-                    "ns": 0,
-                    "title": "Example Page 3",
-                    "links": [
-                        {
-                            "ns": 0,
-                            "title": "Example Page 1"
-                        },
-                        {
-                            "ns": 0,
-                            "title": "Example Page 2"
-                        },
-                        {
-                            "ns": 0,
-                            "title": "Revisualize Wiki"
-                        }
-                    ]
-                },
-                "2065": {
-                    "pageid": 2065,
-                    "ns": 0,
-                    "title": "Bacon Ipsum"
-                }
-            },
-
             addArticle: function( article ) {
-				var linkFrom = this.links[ article.id ];
+				var linkFrom = data.links[ article.id ];
 
                 this.entities.push( article.sphere );
-				this.entities.push( article.text );
+				//this.entities.push( article.text );
 
                 this.articles[ article.title ] = article;
 
@@ -302,6 +113,29 @@ define(
 					= line;
 			},
 
+			addRevision: function( revision ) {
+				var article, point, radius;
+
+                if ( !this.articleExists( revision.title ) ) {
+					radius = getRadius( revision.newlen );
+					point = getRandomPoint( radius );
+					sphere = new Sphere( point.x, point.y, point.z, radius );
+
+					// FIXME: add this back when text doesn't look so terrible
+					//text = new Text( revision.title, sphere );
+					article = new Article( revision, sphere/*, text */);
+
+	                this.addArticle( article );
+
+					_articleCount++;
+					_lastPoint = point;
+					_lastRadius = radius;
+
+                } else {
+	                this.updateArticle( revision );
+                }
+			},
+
             articleExists: function( title ) {
                 return !!this.getArticle( title );
             },
@@ -317,6 +151,10 @@ define(
 
 			lineExists: function( fromTitle, toTitle ) {
 				return !!this.getLine( fromTitle, toTitle );
+			},
+
+			getRevision: function( index ) {
+				return data.revisions[ index ];
 			},
 
             updateArticle: function( title, revision ) {

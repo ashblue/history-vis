@@ -1,16 +1,11 @@
 define(
-	[		
-		'models/sphere',
-		'models/text'
-	],
+	[],
 	function( Sphere, Text ) {
-		var Article = function( revision ) {
+		var Article = function( revision, sphere, text ) {
 			this.id = revision.pageid;
-			this.sphere = new Sphere( revision.newlen );
+			this.sphere = sphere;
 			this.revision = revision;
-
-// FIXME: add text back when it doesn't look so terrible
-//			this.text = new Text( revision.title, this.sphere );
+			this.text = text;
 			this.title = revision.title;
 console.log('added article:', this);
 		};
