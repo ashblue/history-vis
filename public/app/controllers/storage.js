@@ -32,8 +32,8 @@ define(
 			var article, dx, dy, radii, title,
 				i = 0;
 
-			for ( title in this.articles ) {
-				if ( article = this.getArticle( title ) ) {
+			for ( title in storage.articles ) {
+				if ( article = storage.getArticle( title ) ) {
 					dx = article.sphere.mesh.position.x - x;
 					dy = article.sphere.mesh.position.y - y;
 					radii = radius + ( article.sphere.mesh.geometry.radius * article.sphere.mesh.scale.x );
@@ -52,9 +52,9 @@ define(
 		function getRandomPoint( radius ) {
         	var angle, nx, ny,
 				distance = _lastRadius + radius + MAX_RADIUS,
-				x = _lastPoint.x,
-				y = _lastPoint.y,
-				z = _lastPoint.z;
+				x = 0,
+				y = 0,
+				z = 0;
 
 			if ( _articleCount === 0 ) {
 				return _lastPoint;
