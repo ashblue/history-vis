@@ -6,6 +6,7 @@ define(
         'controllers/scene',
         'controllers/lighting',
         'controllers/storage',
+		'models/article',
         'models/delta',
         'models/timer',
         'models/renderer'
@@ -17,6 +18,7 @@ define(
         scene,
         lighting,
         storage,
+		Article,
         delta,
         Timer,
         renderer
@@ -62,7 +64,7 @@ define(
                 	_revision = storage.revisions[_index];
 
                 	if (!storage.articleExists(_revision.title)) {
-	                	storage.addArticle(_revision);
+	                	storage.addArticle(new Article(_revision));
 
                 	} else {
 	                	storage.updateArticle(_revision);
@@ -72,8 +74,7 @@ define(
 	                _timer.start();
                 }
 
-                //physics.update();
-                storage.updateEntities();
+                storage.update();
 
                 if (camera.rotate === true) {
                     var timer = _rotateCount * 0.0005;
